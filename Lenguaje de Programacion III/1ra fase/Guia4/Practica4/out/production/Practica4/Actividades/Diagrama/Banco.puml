@@ -1,0 +1,66 @@
+@startuml
+package Actividades.GestionBanco {
+
+    'Clase CuentaBancaria'
+    class CuentaBancaria {
+        -int numeroCuenta
+        -String titular
+        -double saldo
+        +CuentaBancaria(int numeroCuenta, String titular, double saldo)
+        +depositar(double monto) throws IllegalArgumentException
+        +retirar(double monto) throws SaldoInsuficienteException
+        +transferir(double monto, CuentaBancaria destino) throws SaldoInsuficienteException, CuentaNoEncontradaException
+        +cerrarCuenta() throws SaldoNoCeroException
+        +double getSaldo()
+    }
+
+    'Clase hija CuentaCredito que extiende CuentaBancaria'
+    class CuentaCredito extends CuentaBancaria {
+        -double limiteCredito
+        +CuentaCredito(int numeroCuenta, String titular, double saldo, double limiteCredito)
+        +retirar(double monto) throws LimiteCreditoExcedidoException
+        +transferir(double monto, CuentaBancaria destino) throws LimiteCreditoExcedidoException
+    }
+
+    'Clase ReporteTransacciones para generar reportes'
+    class ReporteTransacciones {
+        +generarReporte(CuentaBancaria cuenta) throws HistorialVacioException
+        +leerTransaccionesArchivo(String archivo) throws FileNotFoundException
+    }
+
+    'Excepciones personalizadas'
+    class SaldoInsuficienteException extends Exception {
+        +SaldoInsuficienteException(String message)
+    }
+
+    class CuentaNoEncontradaException extends Exception {
+        +CuentaNoEncontradaException(String message)
+    }
+
+    class SaldoNoCeroException extends Exception {
+        +SaldoNoCeroException(String message)
+    }
+
+    class LimiteCreditoExcedidoException extends Exception {
+        +LimiteCreditoExcedidoException(String message)
+    }
+
+    class HistorialVacioException extends Exception {
+        +HistorialVacioException(String message)
+    }
+
+    'Relaciones entre clases'
+    CuentaBancaria *-- SaldoInsuficienteException : throws
+    CuentaBancaria *-- CuentaNoEncontradaException : throws
+    CuentaBancaria *-- SaldoNoCeroException : throws
+
+    CuentaCredito *-- LimiteCreditoExcedidoException : throws
+    ReporteTransacciones *-- HistorialVacioException : throws
+
+    CuentaBancaria "1" o-- "1..*" CuentaBancaria : transferir
+    ReporteTransacciones "1" o-- "1" CuentaBancaria : generar reporte
+
+    'Manejo de recursos'
+    ReporteTransacciones ..|> AutoCloseable : try-with-resources
+}
+@enduml
