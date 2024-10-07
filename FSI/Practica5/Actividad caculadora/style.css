@@ -1,0 +1,16 @@
+.texto{
+    font-size: 20px;
+    color: rgb(43, 43, 217);
+}
+
+button {
+    font-size: 18px;
+    padding: 5px 10px;
+}
+
+#respuesta {
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    color: rgb(0, 0, 100);
+}
